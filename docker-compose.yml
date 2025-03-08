@@ -1,0 +1,45 @@
+#services:
+#  app:
+#    build: .
+#    ports:
+#      - "3333:3333"
+#    env_file:
+#      - .env
+#    depends_on:
+#      - connect-pg
+#      - connect-redis
+#  connect-pg:
+#    image: bitnami/postgresql:latest
+#    ports:
+#      - '5432:5432'
+#    environment:
+#      - POSTGRES_USER=docker
+#      - POSTGRES_PASSWORD=docker
+#      - POSTGRES_DB=connect
+#    volumes:
+#      - postgres_data:/bitnami/postgresql/data
+#  connect-redis:
+#    image: bitnami/redis:latest
+#    environment:
+#      - ALLOW_EMPTY_PASSWORD=yes
+#    ports:
+#      - "6379:6379"
+#volumes:
+#  postgres_data:
+
+services:
+  connect-pg:
+    image: bitnami/postgresql:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=connect
+
+  connect-redis:
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
