@@ -1,32 +1,3 @@
-#services:
-#  app:
-#    build: .
-#    ports:
-#      - "3333:3333"
-#    env_file:
-#      - .env
-#    depends_on:
-#      - connect-pg
-#      - connect-redis
-#  connect-pg:
-#    image: bitnami/postgresql:latest
-#    ports:
-#      - '5432:5432'
-#    environment:
-#      - POSTGRES_USER=docker
-#      - POSTGRES_PASSWORD=docker
-#      - POSTGRES_DB=connect
-#    volumes:
-#      - postgres_data:/bitnami/postgresql/data
-#  connect-redis:
-#    image: bitnami/redis:latest
-#    environment:
-#      - ALLOW_EMPTY_PASSWORD=yes
-#    ports:
-#      - "6379:6379"
-#volumes:
-#  postgres_data:
-
 services:
   connect-pg:
     image: bitnami/postgresql:latest
@@ -43,3 +14,30 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "6379:6379"
+
+  connect-backend:
+    build: .
+    ports:
+      - "3333:3333"
+    depends_on:
+      - connect-pg
+      - connect-redis
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=connect
+      - REDIS_HOST=connect-redis
+      - REDIS_PORT=6379
+      - DATABASE_URL=postgresql://docker:docker@connect-pg:5432/connect # Correção aqui
+      - REDIS_URL=redis://connect-redis:6379 # Correção aqui
+      - API_URL=http://connect-backend:3333 # Adicionado aqui
+      - WEB_URL=http://connect-frontend:3000 # Adicionado aqui
+
+  connect-frontend:
+    build: ../web-nlw-25 # Caminho para o diretório do frontend
+    ports:
+      - "3001:3000"
+    depends_on:
+      - connect-backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://connect-backend:3333

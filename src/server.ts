@@ -20,7 +20,14 @@ const app = fastify()
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
-app.register(fastifyCors)
+//app.register(fastifyCors)
+
+app.register(fastifyCors, {
+  origin: 'http://localhost:3000', // Permite requisições do seu frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+})
 
 app.register(fastifySwagger, {
   openapi: {
